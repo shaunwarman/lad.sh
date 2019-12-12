@@ -5,6 +5,8 @@ const Boom = require('@hapi/boom');
 const _ = require('lodash');
 const validator = require('validator');
 const sanitizeHtml = require('sanitize-html');
+const { authenticator } = require('otplib');
+const qrcode = require('qrcode');
 
 const bull = require('../../../bull');
 const Users = require('../../models/user');
@@ -121,6 +123,21 @@ async function login(ctx, next) {
         timer: 3000,
         position: 'top'
       });
+      
+      const uri = authenticator.keyuri(
+        user.email,
+        'lad.sh',
+        user.two_factor_token
+      );
+      
+      ctx.state.user.qrcode = await qrcode.toDataURL(uri);
+      await ctx.state.user.save();
+      
+      if (user.two_factor_enabled) {
+        if (!ctx.session.TwoFactorSuccess) {
+          redirectTo = `/${ctx.locale}/login-otp`;
+        }
+      }
 
       if (ctx.accepts('json')) {
         ctx.body = { redirectTo };
@@ -137,6 +154,19 @@ async function login(ctx, next) {
   })(ctx, next);
 }
 
+async function loginOtp(ctx) {
+  await passport.authenticate('otp', async (err, user, info) => {
+    ctx.session.secondFactor = 'totp';
+    let redirectTo = `/${ctx.locale}${config.passportCallbackOptions.successReturnToOrRedirect}`;
+    ctx.redirect(redirectTo);
+  });
+}
+
+// similar to registerOrLogin
+async function renderOtp(ctx, next) {
+  await ctx.render('my-account/2fa');
+}
+
 async function register(ctx) {
   const { body } = ctx.request;
 
@@ -146,10 +176,17 @@ async function register(ctx) {
   if (!isSANB(body.password))
     throw Boom.badRequest(ctx.translate('INVALID_PASSWORD'));
 
+  // add qrcode secret later used to generate qr code
+  const key = authenticator.generateSecret();
+
   // register the user
   const count = await Users.countDocuments({ group: 'admin' });
   const user = await Users.register(
-    { email: body.email, group: count === 0 ? 'admin' : 'user' },
+    { 
+      email: body.email, 
+      group: count === 0 ? 'admin' : 'user',
+      two_factor_token: key
+    },
     body.password
   );
 
@@ -315,6 +352,8 @@ module.exports = {
   registerOrLogin,
   homeOrDashboard,
   login,
+  loginOtp,
+  renderOtp,
   register,
   forgotPassword,
   resetPassword,

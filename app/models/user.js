@@ -69,6 +69,20 @@ const User = new mongoose.Schema({
   has_set_password: {
     type: Boolean,
     default: false
+  },
+  
+  two_factor_enabled: {
+    type: Boolean,
+    default: false
+  },
+  
+  two_factor_token: {
+    type: String,
+    required: false,
+    lowercase: true,
+    trim: true,
+    unique: true,
+    index: true
   }
 });
 

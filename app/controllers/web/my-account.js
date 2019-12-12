@@ -80,7 +80,29 @@ async function resetAPIToken(ctx) {
   }
 }
 
+async function setup2fa(ctx) {
+  ctx.state.user.two_factor_enabled = true;
+  await ctx.state.user.save();
+
+  ctx.flash('custom', {
+    title: ctx.request.t('Success'),
+    text: ctx.translate('REQUEST_OK'),
+    type: 'success',
+    toast: true,
+    showConfirmButton: false,
+    timer: 3000,
+    position: 'top'
+  });
+
+  if (ctx.accepts('json')) {
+    ctx.body = { reloadPage: true };
+  } else {
+    ctx.redirect('back');
+  }
+}
+
 module.exports = {
   update,
-  resetAPIToken
+  resetAPIToken,
+  setup2fa
 };

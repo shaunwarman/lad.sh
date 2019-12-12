@@ -16,6 +16,7 @@ localeRouter
   .get(
     '/dashboard',
     policies.ensureLoggedIn,
+    // TODO: policies.ensure2FA
     web.breadcrumbs,
     render('dashboard')
   )
@@ -33,6 +34,8 @@ localeRouter
   .get('/logout', policies.ensureLoggedIn, web.auth.logout)
   .get('/login', policies.ensureLoggedOut, web.auth.registerOrLogin)
   .post('/login', policies.ensureLoggedOut, web.auth.login)
+  .get('/login-otp', policies.ensureLoggedIn, web.auth.renderOtp)
+  .post('/login-otp', policies.ensureLoggedIn, web.auth.loginOtp)
   .get('/register', policies.ensureLoggedOut, web.auth.registerOrLogin)
   .post('/register', policies.ensureLoggedOut, web.auth.register);
 
