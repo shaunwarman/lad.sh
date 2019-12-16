@@ -81,7 +81,8 @@ async function resetAPIToken(ctx) {
 }
 
 async function setup2fa(ctx) {
-  ctx.state.user.two_factor_enabled = true;
+  const { body } = ctx.request;
+  ctx.state.user.two_factor_enabled = body.enable_2fa === 'true';
   await ctx.state.user.save();
 
   ctx.flash('custom', {

@@ -157,7 +157,7 @@ async function login(ctx, next) {
 async function loginOtp(ctx, next) {
   await passport.authenticate('otp', (err, user, info) => {
     if (err) throw err;
-    if (!user) throw Boom.badRequest(ctx.translate('INVALID_OTP_PASSCODE'));
+    if (!user) throw Boom.unauthorized(ctx.translate('INVALID_OTP_PASSCODE'));
 
     ctx.session.secondFactor = 'totp';
     let redirectTo = `/${ctx.locale}/dashboard`;
