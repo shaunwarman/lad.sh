@@ -154,12 +154,20 @@ async function login(ctx, next) {
   })(ctx, next);
 }
 
-async function loginOtp(ctx) {
-  await passport.authenticate('otp', async (err, user, info) => {
+async function loginOtp(ctx, next) {
+  await passport.authenticate('otp', (err, user, info) => {
+    if (err) throw err;
+    if (!user) throw Boom.badRequest(ctx.translate('INVALID_OTP_PASSCODE'));
+
     ctx.session.secondFactor = 'totp';
-    let redirectTo = `/${ctx.locale}${config.passportCallbackOptions.successReturnToOrRedirect}`;
-    ctx.redirect(redirectTo);
-  });
+    let redirectTo = `/${ctx.locale}/dashboard`;
+    
+    if (ctx.accepts('json')) {
+      ctx.body = { redirectTo };
+    } else {
+      ctx.redirect(redirectTo);
+    }
+  })(ctx, next);
 }
 
 // similar to registerOrLogin
