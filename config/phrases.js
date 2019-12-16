@@ -22,6 +22,7 @@ module.exports = {
   INVALID_TOKEN: 'Invalid CSRF token.',
   INVALID_OTP_PASSCODE: 'Invalid 2FA passcode.',
   IS_NOT_ADMIN: 'You do not belong to the administrative user group.',
+  TWO_FACTOR_REQUIRED: 'Please log in with 2FA passcode to view this page.',
   LOGIN_REQUIRED: 'Please log in to view the page you requested.',
   PASSWORD_RESET_LIMIT:
     'You can only request a password reset every 30 minutes.  Please try again %s.',

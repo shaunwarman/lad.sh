@@ -16,7 +16,7 @@ localeRouter
   .get(
     '/dashboard',
     policies.ensureLoggedIn,
-    // TODO: policies.ensure2FA
+    policies.ensure2fa,
     web.breadcrumbs,
     render('dashboard')
   )
@@ -31,10 +31,10 @@ localeRouter
   .post('/forgot-password', web.auth.forgotPassword)
   .get('/reset-password/:token', render('reset-password'))
   .post('/reset-password/:token', web.auth.resetPassword)
-  .get('/logout', policies.ensureLoggedIn, web.auth.logout)
+  .get('/logout', policies.ensureLoggedIn, policies.ensure2fa, web.auth.logout)
   .get('/login', policies.ensureLoggedOut, web.auth.registerOrLogin)
   .post('/login', policies.ensureLoggedOut, web.auth.login)
-  .get('/login-otp', policies.ensureLoggedIn, web.auth.renderOtp)
+  .get('/login-otp', policies.ensureLoggedIn, render('my-account/2fa'))
   .post('/login-otp', policies.ensureLoggedIn, web.auth.loginOtp)
   .get('/register', policies.ensureLoggedOut, web.auth.registerOrLogin)
   .post('/register', policies.ensureLoggedOut, web.auth.register);

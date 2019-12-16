@@ -19,6 +19,7 @@ async function createQRCode(ctx) {
 }
 
 router.use(policies.ensureLoggedIn);
+router.use(policies.ensure2fa);
 router.use(async (ctx, next) => { 
   await createQRCode(ctx);
   return next();

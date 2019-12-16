@@ -170,9 +170,8 @@ async function loginOtp(ctx, next) {
   })(ctx, next);
 }
 
-// similar to registerOrLogin
-async function renderOtp(ctx, next) {
-  await ctx.render('my-account/2fa');
+async function renderOtp(ctx) {
+  ctx.render('my-account/security');
 }
 
 async function register(ctx) {
