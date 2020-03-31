@@ -25,7 +25,7 @@ block body
                           = t(' Download')
                   .col-sm-1
                   .col-sm
-                    input(type='text', hidden, value=twoFactorRecoveryKeys).form-control#two-factor-recovery-keys
+                    input(type='text', hidden, value=user[config.userFields.twoFactorRecoveryKeys].join('\n')).form-control#two-factor-recovery-keys
                     button(type='button', data-toggle="clipboard", data-clipboard-target="#two-factor-recovery-keys").btn.btn-secondary.btn-block
                       i.fa.fa-clipboard
                         = t(' Copy')

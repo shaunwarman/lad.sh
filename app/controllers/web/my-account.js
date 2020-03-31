@@ -89,7 +89,7 @@ async function security(ctx) {
       .fill()
       .map(() => cryptoRandomString({ length: 10, characters: '1234567890' }));
 
-    ctx.state.user[config.userFields.twoFactorRecoveryKeys] = [...recoveryKeys];
+    ctx.state.user[config.userFields.twoFactorRecoveryKeys] = recoveryKeys;
     ctx.state.user = await ctx.state.user.save();
     ctx.state.twoFactorTokenURI = authenticator.keyuri(
       ctx.state.user.email,
@@ -97,7 +97,6 @@ async function security(ctx) {
       ctx.state.user[config.userFields.twoFactorToken]
     );
     ctx.state.qrcode = await qrcode.toDataURL(ctx.state.twoFactorTokenURI);
-    ctx.state.twoFactorRecoveryKeys = recoveryKeys.join('\n');
   }
 
   await ctx.render('my-account/security');
