@@ -17,3 +17,4 @@ locales/**/*
 !locales
 .vscode
 package-lock.json
+README-*.md
