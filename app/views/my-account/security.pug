@@ -7,6 +7,35 @@ block body
       .modal-dialog(role='document')
         .modal-content
           .modal-header.d-block.text-center
+            h5.modal-title.d-inline-block.ml-4= t('Two-Factor Recovery Keys')
+            button(type='button', data-dismiss='modal', aria-label='Close').close
+              span(aria-hidden='true') &times;
+          .modal-body
+            p= t('Recovery keys allow you to login to your account when you have lost access to your Two-Factor Authentication device or authenticator app.')
+            hr
+            p.text-muted.font-weight-bold= t('Download or copy your recovery keys before continuing your two-factor setup!')
+              hr
+              .container
+                .row
+                  .col-sm
+                    form(action=l('/my-account/recovery-keys'), method='POST')
+                      input(type="hidden", name="_csrf", value=ctx.csrf)
+                      button(type='submit').btn.btn-primary.btn-block
+                        i.fa.fa-download
+                          = t(' Download')
+                  .col-sm-1
+                  .col-sm
+                    input(type='text', hidden, value=twoFactorRecoveryKeys).form-control#two-factor-recovery-keys
+                    button(type='button', data-toggle="clipboard", data-clipboard-target="#two-factor-recovery-keys").btn.btn-secondary.btn-block
+                      i.fa.fa-clipboard
+                        = t(' Copy')
+              hr
+              p.text-muted.text-center.font-weight-bold: small: mark= t('WARNING: Keep your recovery keys in a safe place in case you need to use them in the future!')
+              button(type='submit').btn.btn-lg.btn-block.btn-primary= t('Continue')
+    #modal-enable-2fa-verify(tabindex='-1', role='dialog').modal.fade
+      .modal-dialog(role='document')
+        .modal-content
+          .modal-header.d-block.text-center
             h5.modal-title.d-inline-block.ml-4= t('Enable Two-Factor Authentication')
             button(type='button', data-dismiss='modal', aria-label='Close').close
               span(aria-hidden='true') &times;
