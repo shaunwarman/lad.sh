@@ -77,11 +77,10 @@ async function resetAPIToken(ctx) {
 }
 
 async function recoveryKeys(ctx) {
-  const twoFactorRecoveryKeys =
-    ctx.state.user[config.userFields.twoFactorRecoveryKeys];
+  const otpRecoveryKeys = ctx.state.user[config.userFields.otpRecoveryKeys];
 
   ctx.attachment('recovery-keys.txt');
-  ctx.body = twoFactorRecoveryKeys
+  ctx.body = otpRecoveryKeys
     .toString()
     .replace(/,/g, '\n')
     .replace(/"/g, '');
@@ -89,20 +88,20 @@ async function recoveryKeys(ctx) {
 
 async function setup2fa(ctx) {
   if (ctx.method === 'DELETE') {
-    ctx.state.user[config.passport.fields.twoFactorEnabled] = false;
+    ctx.state.user[config.passport.fields.otpEnabled] = false;
   } else if (
     ctx.method === 'POST' &&
-    ctx.state.user[config.passport.fields.twoFactorToken]
+    ctx.state.user[config.passport.fields.otpToken]
   ) {
     const isValid = authenticator.verify({
       token: ctx.request.body.token,
-      secret: ctx.state.user[config.passport.fields.twoFactorToken]
+      secret: ctx.state.user[config.passport.fields.otpToken]
     });
 
     if (!isValid)
       return ctx.throw(Boom.badRequest(ctx.translate('INVALID_OTP_PASSCODE')));
 
-    ctx.state.user[config.passport.fields.twoFactorEnabled] = true;
+    ctx.state.user[config.passport.fields.otpEnabled] = true;
   } else {
     return ctx.throw(Boom.badRequest('Invalid method'));
   }
